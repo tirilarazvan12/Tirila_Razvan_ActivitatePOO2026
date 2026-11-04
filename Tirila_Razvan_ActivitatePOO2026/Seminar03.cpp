@@ -135,6 +135,124 @@ public:
 	}
 
 
+	explicit operator float()
+	{
+		float suma = 0;
+		if (this->nrAplicatii > 0)
+		{
+			for (int i = 0; i < this->nrAplicatii; i++)
+			{
+				suma += memorieAplicatii[i];
+			}
+			return suma / this->nrAplicatii;
+		}
+
+	}
+
+	explicit operator int()
+	{
+		return this->nrAplicatii;
+	}
+
+	//post decrementare
+	Telefon operator--(int)
+	{
+		Telefon copie = *this;
+		this->pret--;
+		return copie;
+	}
+
+	//pre decrementare
+	Telefon &operator--()
+	{
+		this->pret--;
+		return *this;
+	}
+
+	//operatorul <<
+
+	friend ostream& operator<<(ostream& out, const Telefon& actual)
+	{
+		out << "id: " << actual.id << endl;
+		out << "Producator: " << actual.producator<< endl;
+		out << "Pret: " << actual.pret<< endl;
+		out << "Memorie: " << actual.memorie << endl;
+		out << "Nr de aplicatii: " << actual.nrAplicatii << endl;
+		out << "Memorie aplicatii: ";
+		for (int i = 0; i < actual.nrAplicatii-1; i++)
+			out << actual.memorieAplicatii[i] << ", ";
+		out << actual.memorieAplicatii[actual.nrAplicatii - 1] << ".";
+		out << endl;
+		return out;
+	}
+
+	//operator >>
+
+	friend istream& operator>>(istream& in, Telefon& actual)
+	{
+		cout << "Producator: ";
+		char buffer[100];
+		in >> buffer;
+		if (actual.producator)
+			delete[] actual.producator;
+		actual.producator = new char[strlen(buffer) + 1];
+		strcpy_s(actual.producator, strlen(buffer) + 1, buffer);
+		cout << "Pret= ";
+		in >> actual.pret;
+		cout << "Memorie= ";
+		in >> actual.memorie;
+		cout << "Nr de aplicatii= ";
+		in >> actual.nrAplicatii;
+		if (actual.memorieAplicatii)
+			delete[] actual.memorieAplicatii;
+		actual.memorieAplicatii = new float[actual.nrAplicatii];
+		cout << "Introduceti memorie fiecare aplicatie: ";
+		for (int i = 0; i < actual.nrAplicatii; i++)
+			in >> actual.memorieAplicatii[i];
+		return in;
+	}
+
+	//operator functie
+
+	float operator()()
+	{
+		if (this->nrAplicatii > 0)
+			return this->pret / this->nrAplicatii;
+		else
+			return 0;
+	}
+
+	float operator()(float tva)
+	{
+		if (this->nrAplicatii > 0)
+			return (this->pret + this->pret * tva) / this->nrAplicatii;
+		else
+			return 0;
+	}
+
+	float operator()(int discount)
+	{
+		if (this->nrAplicatii > 0)
+			return (this->pret - (discount/100.0*this->pret)) / this->nrAplicatii;
+		else
+			return 0;
+	}
+
+	bool operator==(Telefon t)
+	{
+		if (strcmp(this->producator, t.producator) != 0)
+			return false;
+		if (this->rezolutie != t.rezolutie)
+			return false;
+		if (this->memorie != t.memorie)
+			return false;
+		if (this->model != t.model)
+			return false;
+		return true;
+	}
+
+
+
 	void afisare() {
 		cout << "Rezolutie: " << this->rezolutie << "\n";
 		cout << "Memorie: " << this->memorie << "\n";
@@ -243,17 +361,21 @@ void main() {
 	Telefon t;
 	Telefon t2(6.3, 512);
 	Telefon t3 = t;
-	t = t2;
-	t2 = t2;
-
-	Telefon t4 = t2 + t;
-	Telefon t5 = t2 + 10;
-	Telefon t6 = 10 + t2;
-
-	cout << t2.getProducator() << endl;
-	cout << calculeazaPretPerAplicatie(t) << endl;
-	Student student("Andrei", t2);
-	cout << student.getNume() << endl;
-	cout << student.getTelefon().getProducator() << endl;
-	student.afisareInformatii();
+	float a = 6.3;
+	int b = (int)a;
+	float memorieMedie;
+	memorieMedie = (float)t;//cast explicit
+	t3=t--;
+	t3=--t;
+	//cin >> t;
+	cout << t;
+	cout << "Pret per aplicatii: " << t3();
+	cout << endl;
+	cout << "pret cu tva per aplicatie: " << t3(0.21f)<<endl;
+	cout << "pret cu discount per aplicatie: " << t3(21);
+	cout << endl;
+	if (t == t2)
+		cout << "telefoane asemanatoare.";
+	else
+		cout << "telefoane diferite.";
 }
