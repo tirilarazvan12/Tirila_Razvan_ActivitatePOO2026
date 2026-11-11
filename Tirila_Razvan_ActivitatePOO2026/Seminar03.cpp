@@ -116,6 +116,11 @@ public:
 		strcpy_s(this->producator, strlen(producator) + 1, producator);
 	}
 
+	int getId()
+	{
+		return this->id;
+	}
+
 	Telefon operator+(const Telefon& t) {
 		Telefon result = *this;
 		result.pret = this->pret + t.pret;
@@ -130,7 +135,7 @@ public:
 
 	friend Telefon operator+(float crestere, Telefon t) {
 		Telefon result = t;
-		t.setPret(t.getPret() + crestere);
+		result.setPret(result.getPret() + crestere);
 		return result;
 	}
 
@@ -367,7 +372,7 @@ void main() {
 	memorieMedie = (float)t;//cast explicit
 	t3=t--;
 	t3=--t;
-	//cin >> t;
+	cin >> t;
 	cout << t;
 	cout << "Pret per aplicatii: " << t3();
 	cout << endl;
@@ -378,4 +383,5 @@ void main() {
 		cout << "telefoane asemanatoare.";
 	else
 		cout << "telefoane diferite.";
+	cout << t3.getId();
 }
