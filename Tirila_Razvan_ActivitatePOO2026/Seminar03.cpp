@@ -49,6 +49,21 @@ public:
 		this->memorieAplicatii[4] = 2.4;
 	}
 
+	Telefon(float rezolutie, float memorie, string model, char* producator, float pret, int nrAplicatii, float* memorieAplicatii) : id(contor++) {
+		this->rezolutie = rezolutie;
+		this->memorie = memorie;
+		this->model = model;
+		this->producator = new char[strlen(producator) + 1];
+		strcpy_s(producator, strlen(producator) + 1, producator);
+		this->pret = pret;
+		this->nrAplicatii = nrAplicatii;
+		this->memorieAplicatii = new float[this->nrAplicatii];
+		for (int i = 0; i < nrAplicatii; i++) {
+			this->memorieAplicatii[i] = memorieAplicatii[i];
+		}
+
+	}
+
 	Telefon(const Telefon& t) : id(contor++)
 	{
 		this->rezolutie = t.rezolutie;
@@ -359,29 +374,135 @@ public:
 	void afisareInformatii() {
 		cout << this->nume << " are un telefon cu " << this->telefon.memorie << " GB memorie";
 	}
+
+	friend ostream& operator<<(ostream& out, Student& s)
+	{
+		out << "Nume: " << s.nume << endl;
+		out << "Telefon: " << s.telefon << endl;
+		return out;
+	}
+};
+
+class TelefonPliabil : public Telefon {
+	int nrPlieri;
+	float dimensiunePliat;
+public:
+	TelefonPliabil(): Telefon() {
+		this->nrPlieri = 2;
+		this->dimensiunePliat = 4;
+	}
+
+	TelefonPliabil(int nrPlieri, float dimensiunePliat) : Telefon(1080, 256) {
+		this->nrPlieri = nrPlieri;
+		this->dimensiunePliat = dimensiunePliat;
+	}
+
+	TelefonPliabil(float rezolutie, float memorie, string model, char* producator, float pret, int nrAplicatii, float* memorieAplicatii, int nrPlieri, float dimensiunePliat) : Telefon(rezolutie, memorie, model, producator, pret, nrAplicatii, memorieAplicatii) {
+		this->nrPlieri = nrPlieri;
+		this->dimensiunePliat = dimensiunePliat;
+	}
+
+	TelefonPliabil(const TelefonPliabil& tp) : Telefon(tp) {
+		this->nrPlieri = tp.nrPlieri;
+		this->dimensiunePliat = tp.dimensiunePliat;
+	}
+
+	TelefonPliabil& operator=(const TelefonPliabil& tp) {
+		if (this != &tp)
+		{
+			(Telefon)*this = (Telefon)tp;
+			this->nrPlieri = tp.nrPlieri;
+			this->dimensiunePliat = tp.dimensiunePliat;
+		}
+		return *this;
+	}
+
+	friend ostream& operator<<(ostream& out, const TelefonPliabil& tp) {
+		out << (Telefon)tp;
+		out << "Nr plieri: " << tp.nrPlieri << endl;
+		out << "Dimensiune: " << tp.dimensiunePliat << endl;
+		return out;
+	}
+
+	friend istream& operator>>(istream& in, TelefonPliabil& tp) {
+		cout << "Telefon: " << endl;
+		in >> (Telefon&)tp;
+		cout << "Nr Plieri: ";
+		in >> tp.nrPlieri;
+		cout << "Dimensiune: ";
+		in >> tp.dimensiunePliat;
+		return in;
+	}
+
+	~TelefonPliabil() {
+
+	}
+
+	int getNrPlieri() {
+		return this->nrPlieri;
+	}
+
+	void setNrPlieri(int nrPlieri) {
+		if (nrPlieri > 0)
+			this->nrPlieri = nrPlieri;
+		else this->nrPlieri = 0;
+	}
+
+	explicit operator int() {
+		return this->nrPlieri;
+	}
+
+	float calculeazaDimensiuneExtinsa() {
+		return this->dimensiunePliat * (this->nrPlieri + 1);
+	}
+
+	bool operator>=(const TelefonPliabil& tp) {
+		return (this->nrPlieri>=tp.nrPlieri);
+	}
 };
 
 void main() {
 
-	Telefon t;
-	Telefon t2(6.3, 512);
-	Telefon t3 = t;
-	float a = 6.3;
-	int b = (int)a;
-	float memorieMedie;
-	memorieMedie = (float)t;//cast explicit
-	t3=t--;
-	t3=--t;
-	cin >> t;
-	cout << t;
-	cout << "Pret per aplicatii: " << t3();
+	//Telefon t;
+	//Telefon t2(6.3, 512);
+	//Telefon t3 = t;
+	//float a = 6.3;
+	//int b = (int)a;
+	//float memorieMedie;
+	//memorieMedie = (float)t;//cast explicit
+	//t3=t--;
+	//t3=--t;
+	//cin >> t;
+	//cout << t;
+	//cout << "Pret per aplicatii: " << t3();
+	//cout << endl;
+	//cout << "pret cu tva per aplicatie: " << t3(0.21f)<<endl;
+	//cout << "pret cu discount per aplicatie: " << t3(21);
+	//cout << endl;
+	//if (t == t2)
+	//	cout << "telefoane asemanatoare.";
+	//else
+	//	cout << "telefoane diferite.";
+	//cout << t3.getId();
+
+	TelefonPliabil tp1;
+	TelefonPliabil tp2(1, 6);
+	TelefonPliabil tp3 = tp1;
+	TelefonPliabil tp4;
+	tp4 = tp2;
+	cout << tp2;
+	TelefonPliabil tp5;
+	/*cin >> tp5;
+	cout << tp5;*/
+	int nr = (int)tp1;
+	cout << nr;
+	Student s1("Alex", tp2);
+	cout << s1 << endl;
+	cout << "Dimensiune Extinsa: " << tp2.calculeazaDimensiuneExtinsa();
 	cout << endl;
-	cout << "pret cu tva per aplicatie: " << t3(0.21f)<<endl;
-	cout << "pret cu discount per aplicatie: " << t3(21);
-	cout << endl;
-	if (t == t2)
-		cout << "telefoane asemanatoare.";
+	tp1.setNrPlieri(0);
+	if (tp1 >= tp2)
+		cout << "Tp1 mai mare" << endl;
 	else
-		cout << "telefoane diferite.";
-	cout << t3.getId();
+		cout<<"tp2 este mai mare" << endl;
 }
